@@ -22,7 +22,9 @@ app.use('/api/v1', userinfo)
 app.use('/api/v1', medicaldata)
 
 
-app.listen(PORT, () => {
-    console.log("Server Started")
-   
-})
+
+const HOST = 'localhost'; // You can replace 'localhost' with your specific host
+
+app.listen(PORT, HOST, () => {
+    console.log(`Server started on http://${HOST}:${PORT}`);
+});
