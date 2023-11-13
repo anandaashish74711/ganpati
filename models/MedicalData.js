@@ -18,6 +18,10 @@ const ObservationSchema = new mongoose.Schema({
         type: Number,
         required: true,
     },
+    postSensor: {
+        type: Number,
+        required: true, 
+    },
     bioImpedance: {
         type: Number,
         required: true,

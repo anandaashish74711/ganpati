@@ -7,7 +7,7 @@ exports.addMedicalData = async (req, res) => {
     try {
         await connect();
        
-        const { observationNumber, timestamp, frequency, postGenerator, bioImpedance, phaseAngle, stepSize, numberOfPoints, visitId, visitDate } = req.body;
+        const { observationNumber, timestamp, frequency, postGenerator,postSensor, bioImpedance, phaseAngle, stepSize, numberOfPoints, visitId, visitDate } = req.body;
 
         // Create a new Observation document
         const observation = {
@@ -15,6 +15,7 @@ exports.addMedicalData = async (req, res) => {
             timestamp,
             frequency,
             postGenerator,
+            postSensor,
             bioImpedance,
             phaseAngle,
             stepSize,
@@ -40,10 +41,12 @@ exports.addMedicalData = async (req, res) => {
         }
 
         // Push the visit to the patient's visits array
-        await Patient.findOneAndUpdate({ id: patientId }, {
-            $push: { visits: visit },
-        });
-
+        await Patient.findOneAndUpdate(
+            { id: patientId },
+            { $addToSet: { visits: visit } },
+            { new: true } // This option returns the modified document instead of the original
+        );
+        
         return res.status(200).json({
             success: true,
             message: "Medical data created and associated with patient successfully ✅",
