@@ -1,48 +1,52 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const { connect } = require('../config/database');
-const UserInfo = require('../models/userInfo');
-const MedicalData = require('../models/MedicalData');
+const Patient = require('../models/MedicalData');
 
 exports.addMedicalData = async (req, res) => {
     try {
         await connect();
        
-        const { deviceId, diabetes, bloodPressure, heartRate } = req.body;
+        const { observationNumber, timestamp, frequency, postGenerator, bioImpedance, phaseAngle, stepSize, numberOfPoints, visitId, visitDate } = req.body;
 
-        // Create a new MedicalData document
-        const medicalData = new MedicalData({
-            deviceId,
-            diabetes, 
-            bloodPressure,
-            heartRate,
-        });
-  
-        const savedMedicalData = await medicalData.save(); 
+        // Create a new Observation document
+        const observation = {
+            observationNumber,
+            timestamp,
+            frequency,
+            postGenerator,
+            bioImpedance,
+            phaseAngle,
+            stepSize,
+            numberOfPoints
+        };
 
-        const medicalDataId = savedMedicalData._id;
+        // Create a new Visit document
+        const visit = {
+            visitId,
+            visitDate,
+            observations: [observation]
+        };
 
-        const UserId = req.body.UserId;
-         console.log(UserId);
+        const patientId = req.body.patientId;
         
-    const userExists = await UserInfo.exists({ _id: UserId });
-    
+        const patientExists = await Patient.exists({ id: patientId });
 
-    if (!userExists) {
-      return res.status(400).json({
-        success: false,
-        message: "User does not exist"
-      });
-    }
+        if (!patientExists) {
+            return res.status(400).json({
+                success: false,
+                message: "Patient does not exist"
+            });
+        }
 
-        // Push the ID of the medical data to the user's MedicalData array
-        await UserInfo.findByIdAndUpdate(UserId, {
-            $push: { MedicalData:medicalDataId},
+        // Push the visit to the patient's visits array
+        await Patient.findOneAndUpdate({ id: patientId }, {
+            $push: { visits: visit },
         });
 
         return res.status(200).json({
             success: true,
-            message: "MedicalData created and associated with UserInfo successfully ✅",
+            message: "Medical data created and associated with patient successfully ✅",
         });
     } catch (error) {
         return res.status(500).json({

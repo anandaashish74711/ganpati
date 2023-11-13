@@ -1,23 +1,61 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
-const MedicalDataSchema = new mongoose.Schema({
-    deviceId: {
+const ObservationSchema = new mongoose.Schema({
+    observationNumber: {
+        type: Number,
+        required: true,
+        unique: true
+    },
+    timestamp: {
+        type: Date,
+        required: true,
+    },
+    frequency: {
+        type: Number,
+        required: true,
+    },
+    postGenerator: {
+        type: Number,
+        required: true,
+    },
+    bioImpedance: {
+        type: Number,
+        required: true,
+    },
+    phaseAngle: {
+        type: Number,
+        required: true,
+    },
+    stepSize: {
+        type: Number,
+        required: true,
+    },
+    numberOfPoints: {
+        type: Number,
+        required: true,
+    },
+});
+
+const VisitSchema = new mongoose.Schema({
+    visitId: {
         type: String,
         required: true,
+        unique: true
     },
-    diabetes: {
-        type: Number,
+    visitDate: {
+        type: Date,
         required: true,
     },
-    bloodPressure: {
-        type: Number,
+    observations: [ObservationSchema],
+});
+
+const PatientSchema = new mongoose.Schema({
+    id: {
+        type: String,
         required: true,
+        unique: true
     },
-    heartRate: {
-        type: Number,
-        required: true, 
-    },
+    visits: [VisitSchema],
+});
 
-})
-
-module.exports = mongoose.model('MedicalData', MedicalDataSchema)
+module.exports = mongoose.model('Patient', PatientSchema);

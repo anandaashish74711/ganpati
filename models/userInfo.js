@@ -18,22 +18,11 @@ const userInfoSchema = new mongoose.Schema({
         type: String,
         required:true,
     },
-    diabetes: {
-        type: Boolean,
-        required:true,
+    gender:{
+        type:String,
+        required:true
     },
-    bloodPressure: {
-        type: Boolean,
-        required:true,
-    },
-    address: {
-        type: String,
-        required:true,
-    },
-    phoneNumber: {
-        type: Number,
-        required:true,
-    },
+  
     MedicalData:[
         {
             type: mongoose.Schema.Types.ObjectId,
