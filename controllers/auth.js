@@ -53,7 +53,7 @@ exports.signup = async(req, res)=> {
         console.error(error)
         return res.status(500).json({
             success: false,
-            message : "User registration failed"
+            message : "Use registration failed"
         })
     }
 }
