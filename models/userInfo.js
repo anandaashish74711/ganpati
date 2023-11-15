@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const userInfoSchema = new mongoose.Schema({
-    UserId:{
+    UserId: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
         required: true,
@@ -12,23 +12,20 @@ const userInfoSchema = new mongoose.Schema({
     },
     age: {
         type: Number,
-        required:true,
+        required: true,
     },
     bloodGroup: {
         type: String,
-        required:true,
+        required: true,
     },
-    gender:{
-        type:String,
-        required:true
+    gender: {
+        type: String,
+        required: true,
     },
-  
-    MedicalData:[
-        {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'MedicalData',
-        }
-    ]
+    visit: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'VisitSchema',
+    }],
 });
 
 const UserInfo = mongoose.model('UserInfo', userInfoSchema);

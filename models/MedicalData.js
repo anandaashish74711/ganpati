@@ -1,65 +1,54 @@
+
 const mongoose = require('mongoose');
+const { Timeseries } = require('mongoose-timeseries');
 
 const ObservationSchema = new mongoose.Schema({
-    observationNumber: {
-        type: Number,
-        required: true,
-        unique: true
-    },
-    timestamp: {
-        type: Date,
-        required: true,
-    },
-    frequency: {
-        type: Number,
-        required: true,
-    },
-    postGenerator: {
-        type: Number,
-        required: true,
-    },
-    postSensor: {
-        type: Number,
-        required: true, 
-    },
-    bioImpedance: {
-        type: Number,
-        required: true,
-    },
-    phaseAngle: {
-        type: Number,
-        required: true,
-    },
-    stepSize: {
-        type: Number,
-        required: true,
-    },
-    numberOfPoints: {
-        type: Number,
-        required: true,
-    },
+  observationNumber: {
+    type: Number,
+    required: true,
+    unique: true,
+  },
+  timestamp: {
+    type: Date,
+    required: true,
+    index: true, // Add an index for efficient time-based queries
+  },
+  frequency: {
+    type: Number,
+    required: true,
+  },
+  postGenerator: {
+    type: Number,
+    required: true,
+  },
+  postSensor: {
+    type: Number,
+    required: true,
+  },
+  bioImpedance: {
+    type: Number,
+    required: true,
+  },
+  phaseAngle: {
+    type: Number,
+    required: true,
+  },
+  stepSize: {
+    type: Number,
+    required: true,
+  },
+  numberOfPoints: {
+    type: Number,
+    required: true,
+  },
 });
 
-const VisitSchema = new mongoose.Schema({
-    visitId: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    visitDate: {
-        type: Date,
-        required: true,
-    },
-    observations: [ObservationSchema],
+// Configure the Mongoose time series plugin
+ObservationSchema.plugin(Timeseries, {
+  timeField: 'timestamp', 
+  granularity: 'second', 
+  metaField: 'meta', 
 });
 
-const PatientSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    visits: [VisitSchema],
-});
+const Observation = mongoose.model('Observation', ObservationSchema);
 
-module.exports = mongoose.model('Patient', PatientSchema);

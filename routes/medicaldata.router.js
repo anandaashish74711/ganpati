@@ -3,6 +3,6 @@ const router = express.Router()
 const { addMedicalData } = require('../controllers/medicaldata')    
 
 
-router.post('/medicaldata', addMedicalData);
+router.post('/observation', addObservationToVisit);
 
 module.exports = router;
