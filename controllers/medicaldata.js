@@ -11,7 +11,7 @@ const addObservationToVisit = async (req, res) => {
   try {
     connect();
 
-    const userInfo = await UserInfo.findOne({ UserId: UserId });
+    const userInfo =await UserInfo.findOne({ UserId: UserId });
 
     const newObservation = new Observation({ ...observationData });
     await newObservation.save();
