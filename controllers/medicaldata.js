@@ -6,7 +6,7 @@ const UserInfo = require('../models/userInfo');
 const Visit = require('../models/visit');
 
 const addObservationToVisit = async (req, res) => {
-  const { UserId, observationData } = req.body;
+  const { UserId, observationData } =req.body;
 
   try {
     connect();
