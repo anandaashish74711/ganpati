@@ -1,6 +1,6 @@
 const express = require('express')
 const router = express.Router()
-const { addMedicalData } = require('../controllers/medicaldata')    
+const addObservationToVisit = require('../controllers/medicaldata')
 
 
 router.post('/observation', addObservationToVisit);
