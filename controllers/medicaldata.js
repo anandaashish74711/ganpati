@@ -55,7 +55,7 @@ const addObservationToVisit = async (req, res) => {
           ...userInfo.toObject(),
           visit: [...userInfo.visit, visit],
         },
-        message: "Observation added to existing visit✅",
+        message: "Observation added to existing visit",
       });
     }
   } catch (err) {
