@@ -1,34 +1,36 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const { connect } = require('../config/database');
-const Patient = require('../models/MedicalData');
-
-const { Observation, Visit } = require('./models');
-
-const { connect } = require('../config/database');
-
-
+const Observation = require('../models/MedicalData');
+const UserInfo = require('../models/userInfo');
+const Visit = require('../models/visit');
 
 const addObservationToVisit = async (req, res) => {
-    connect();
-    
-  const { visitId, createVisit, observationData } = req.body;
+  const { UserId, observationData } = req.body;
 
   try {
+    connect();
+
+    const userInfo = await UserInfo.findOne({ UserId: UserId });
+
     const newObservation = new Observation({ ...observationData });
     await newObservation.save();
 
-    if (createVisit) {
-      const newVisit = new Visit({
-        visitDate: new Date(),
-        medicalData: [newObservation],
-      });
-      await newVisit.save();
+    if (userInfo) {
+      const visitArrayLength = userInfo.visit.length;
 
-      return res.status(201).json({ message: 'New visit created with observation' });
+      if (visitArrayLength === 0) {
+        const newVisit = new Visit({
+          visitDate: new Date(),
+          medicalData: [newObservation],
+        });
+        await newVisit.save();
+      }
     } else {
-      // Add observation to existing visit
-      const visit = await Visit.findById(visitId);
+      const lastIndex = userInfo.visit.length - 1;
+      const lastVisitId = userInfo.visit[lastIndex];
+
+      const visit = await Visit.findById(lastVisitId);
       if (!visit) {
         return res.status(404).json({ message: 'Visit not found' });
       }
