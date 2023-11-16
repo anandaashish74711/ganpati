@@ -9,7 +9,7 @@ exports.addUserInfo = async (req, res) => {
   try {
     await connect();
 
-    const { UserId,name,age,bloodGroup,diabetes,bloodPressure,address,phoneNumber} = req.body;
+    const { UserId,name,age,bloodGroup,gender} = req.body;
     
 
     const userExists = await User.exists({ _id: UserId });
@@ -28,10 +28,7 @@ exports.addUserInfo = async (req, res) => {
       name,
       age,
       bloodGroup,
-      diabetes,
-      bloodPressure,
-      address,
-      phoneNumber,
+      gender
     });
 
     return res.status(200).json({

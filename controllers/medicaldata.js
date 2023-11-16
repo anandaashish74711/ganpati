@@ -1,61 +1,67 @@
 require('dotenv').config();
 const mongoose = require('mongoose');
 const { connect } = require('../config/database');
-const Patient = require('../models/MedicalData');
+const Observation = require('../models/MedicalData');
+const UserInfo = require('../models/userInfo');
+const Visit = require('../models/visit');
 
-exports.addMedicalData = async (req, res) => {
-    try {
-        await connect();
-       
-        const { observationNumber, timestamp, frequency, postGenerator,postSensor, bioImpedance, phaseAngle, stepSize, numberOfPoints, visitId, visitDate } = req.body;
+const addObservationToVisit = async (req, res) => {
+  const { UserId, observationData } = req.body;
 
-        // Create a new Observation document
-        const observation = {
-            observationNumber,
-            timestamp,
-            frequency,
-            postGenerator,
-            postSensor,
-            bioImpedance,
-            phaseAngle,
-            stepSize,
-            numberOfPoints
-        };
+  try {
+    connect();
 
-        // Create a new Visit document
-        const visit = {
-            visitId,
-            visitDate,
-            observations: [observation]
-        };
+    const userInfo = await UserInfo.findOne({ UserId: UserId });
 
-        const patientId = req.body.patientId;
-        
-        const patientExists = await Patient.exists({ id: patientId });
-
-        if (!patientExists) {
-            return res.status(400).json({
-                success: false,
-                message: "Patient does not exist"
-            });
-        }
-
-        // Push the visit to the patient's visits array
-        await Patient.findOneAndUpdate(
-            { id: patientId },
-            { $addToSet: { visits: visit } },
-            { new: true } // This option returns the modified document instead of the original
-        );
-        
-        return res.status(200).json({
-            success: true,
-            message: "Medical data created and associated with patient successfully ✅",
-        });
-    } catch (error) {
-        return res.status(500).json({
-            success: false,
-            message: "An error occurred",
-            error: error.message,
-        });
+    if (!userInfo) {
+      return res.status(404).json({ message: 'User not found' });
     }
-}
+
+    const newObservation = new Observation({ ...observationData });
+    await newObservation.save();
+
+    if (userInfo.visit.length === 0) {
+      const newVisit = new Visit({
+        visitDate: new Date(),
+        MedicalData: [newObservation._id], // Push only the ObjectId
+      });
+      await newVisit.save();
+
+      userInfo.visit.push(newVisit._id);
+      await userInfo.save();
+
+      return res.status(200).json({
+        success: true,
+        userInfo: {
+          ...userInfo.toObject(),
+          visit: [newVisit],
+        },
+        message: "Observation added to new visit✅",
+      });
+    } else {
+      const lastVisitId = userInfo.visit[userInfo.visit.length - 1];
+      const visit = await Visit.findById(lastVisitId);
+
+      if (!visit) {
+        return res.status(404).json({ message: 'Visit not found' });
+      }
+
+      visit.MedicalData.push(newObservation._id); // Push only the ObjectId
+      await visit.save();
+
+      return res.status(200).json({
+        success: true,
+        userInfo: {
+          ...userInfo.toObject(),
+          visit: [...userInfo.visit, visit],
+        },
+        message: "Observation added to existing visit✅",
+      });
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+module.exports = addObservationToVisit;

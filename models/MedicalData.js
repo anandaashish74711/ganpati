@@ -1,65 +1,59 @@
 const mongoose = require('mongoose');
 
-const ObservationSchema = new mongoose.Schema({
-    observationNumber: {
+const ObservationSchema =  new mongoose.Schema(
+    {
+      timestamp: Date,
+      messages: Number,
+      
+      observationNumber: {
         type: Number,
         required: true,
-        unique: true
-    },
-    timestamp: {
-        type: Date,
-        required: true,
-    },
-    frequency: {
+        unique: true,
+      },
+      frequency: {
         type: Number,
         required: true,
-    },
-    postGenerator: {
+      },
+      postGenerator: {
         type: Number,
         required: true,
-    },
-    postSensor: {
-        type: Number,
-        required: true, 
-    },
-    bioImpedance: {
+      },
+      postSensor: {
         type: Number,
         required: true,
-    },
-    phaseAngle: {
+      },
+      bioImpedance: {
         type: Number,
         required: true,
-    },
-    stepSize: {
+      },
+      phaseAngle: {
         type: Number,
         required: true,
-    },
-    numberOfPoints: {
+      },
+      stepSize: {
         type: Number,
         required: true,
-    },
-});
+      },
+      numberOfPoints: {
+        type: Number,
+        required: true,
+      },
 
-const VisitSchema = new mongoose.Schema({
-    visitId: {
-        type: String,
-        required: true,
-        unique: true
+      metadata: {
+        UserId: String,
+      },
     },
-    visitDate: {
-        type: Date,
-        required: true,
+    {
+      timeseries: {
+        timeField: 'timestamp',
+        metaField: 'metadata',
+        granularity: 'hours',
+      },
     },
-    observations: [ObservationSchema],
-});
+  );
 
-const PatientSchema = new mongoose.Schema({
-    id: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    visits: [VisitSchema],
-});
 
-module.exports = mongoose.model('Patient', PatientSchema);
+
+const Observation = mongoose.model('Observation', ObservationSchema);
+
+module.exports = Observation;
