@@ -6,39 +6,57 @@ const UserInfo = require('../models/userInfo');
 const Visit = require('../models/visit');
 
 const addObservationToVisit = async (req, res) => {
-  const { UserId, observationData } =req.body;
+  const { UserId, observationData } = req.body;
 
   try {
     connect();
 
-    const userInfo =await UserInfo.findOne({ UserId: UserId });
+    const userInfo = await UserInfo.findOne({ UserId: UserId });
+
+    if (!userInfo) {
+      return res.status(404).json({ message: 'User not found' });
+    }
 
     const newObservation = new Observation({ ...observationData });
     await newObservation.save();
 
-    if (userInfo) {
-      const visitArrayLength = userInfo.visit.length;
+    if (userInfo.visit.length === 0) {
+      const newVisit = new Visit({
+        visitDate: new Date(),
+        MedicalData: [newObservation._id], // Push only the ObjectId
+      });
+      await newVisit.save();
 
-      if (visitArrayLength === 0) {
-        const newVisit = new Visit({
-          visitDate: new Date(),
-          medicalData: [newObservation],
-        });
-        await newVisit.save();
-      }
+      userInfo.visit.push(newVisit._id);
+      await userInfo.save();
+
+      return res.status(200).json({
+        success: true,
+        userInfo: {
+          ...userInfo.toObject(),
+          visit: [newVisit],
+        },
+        message: "Observation added to new visit✅",
+      });
     } else {
-      const lastIndex = userInfo.visit.length - 1;
-      const lastVisitId = userInfo.visit[lastIndex];
-
+      const lastVisitId = userInfo.visit[userInfo.visit.length - 1];
       const visit = await Visit.findById(lastVisitId);
+
       if (!visit) {
         return res.status(404).json({ message: 'Visit not found' });
       }
 
-      visit.medicalData.push(newObservation);
+      visit.MedicalData.push(newObservation._id); // Push only the ObjectId
       await visit.save();
 
-      return res.status(201).json({ message: 'Observation added to existing visit' });
+      return res.status(200).json({
+        success: true,
+        userInfo: {
+          ...userInfo.toObject(),
+          visit: [...userInfo.visit, visit],
+        },
+        message: "Observation added to existing visit✅",
+      });
     }
   } catch (err) {
     console.error(err);

@@ -40,7 +40,7 @@ const ObservationSchema =  new mongoose.Schema(
       },
 
       metadata: {
-        discordId: String,
+        UserId: String,
       },
     },
     {
