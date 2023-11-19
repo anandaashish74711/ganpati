@@ -27,10 +27,8 @@ exports.addUserInfo = async (req, res) => {
       UserId,
       name,
       age,
-     gender,
-     bloodGroup,
-     height,
-     weight
+      bloodGroup,
+      gender
     });
 
     return res.status(200).json({

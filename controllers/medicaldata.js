@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const { connect } = require('../config/database');
 const Observation = require('../models/MedicalData');
 const UserInfo = require('../models/userInfo');
-const Visit = require('../models/visit');
+const Visit = require('../models/visit');      
 
 const addObservationToVisit = async (req, res) => {
   const { UserId, observationData } = req.body;
@@ -55,7 +55,7 @@ const addObservationToVisit = async (req, res) => {
           ...userInfo.toObject(),
           visit: [...userInfo.visit, visit],
         },
-        message: "Observation added to existing visit",
+        message: "Observation added to existing visit✅",
       });
     }
   } catch (err) {
