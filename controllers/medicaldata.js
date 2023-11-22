@@ -14,7 +14,7 @@ const addObservationToVisit = async (req, res) => {
     const userInfo = await UserInfo.findOne({ UserId: UserId });
 
     if (!userInfo) {
-      return res.status(404).json({ message: 'User not his found'});
+      return res.status(404).json({ message: 'User not is found'});
     }
 
     const newObservation = new Observation({ ...observationData });

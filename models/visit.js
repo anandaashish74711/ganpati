@@ -10,7 +10,7 @@ const VisitSchema = new mongoose.Schema({
     MedicalData:[
         {
             type: mongoose.Schema.Types.ObjectId,
-            ref: 'ObservationSchema',
+            ref: 'Observation',
         }
     ]
 });

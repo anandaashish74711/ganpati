@@ -24,7 +24,7 @@ const userInfoSchema = new mongoose.Schema({
     },
     visit: [{
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'VisitSchema',
+        ref: 'Visit',
     }],
 });
 
