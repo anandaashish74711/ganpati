@@ -22,12 +22,5 @@ const userInfoSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
-    visit: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'VisitSchema',
-    }],
+   
 });
-
-const UserInfo = mongoose.model('UserInfo', userInfoSchema);
-
-module.exports = UserInfo;

@@ -2,136 +2,91 @@ const bcrypt = require('bcrypt')
 const user = require("../models/user")
 const jwt= require('jsonwebtoken')
 
+
+const{signupAdmin }=require('./Admin')
+const{signupPatient}=require('./Patient')
+const{signupNurse}=require('./Nurse')
+const{signupDoctor}=require('./Doctor')
 require('dotenv').config()
+
 //signup handle
-exports.signup = async(req, res)=> {
+exports.signup = async (req, res) => {
     try {
-        //get input data
-        const {name, email, password, role }= req.body
+        const { role } = req.body;
 
-        // Check if All Details are there or not
-		if (!name ||
-			!email ||
-			!password 
-		) {
-			return res.status(403).send({
-				success: false,
-				message: "All Fields are required",
-			});
-		}
-
-        //check if use already exists?
-        const existingUser = await user.findOne({email})
-        if(existingUser){
-            return res.status(400).json({
-                success: false,
-                message: "User already exists"
-            })
+        switch (role) {
+            case 'Admin':
+                return await signupAdmin(req, res);
+            case 'Doctor':
+                return await signupDoctor(req, res);
+            case 'Nurse':
+                return await signupNurse(req, res);
+            case 'Patient':
+                return await signupPatient(req, res);
+            default:
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid role specified',
+                });
         }
-
-              //secure password
-        let hashedPassword
-        try {
-            hashedPassword = await bcrypt.hash(password,10)
-        } catch (error) {
-            return res.status(500).json({
-                success: false,
-                message : `Hashing pasword error for ${password}: `+error.message
-            })
-        }
-
-        const User = await user.create({
-            name, email, password:hashedPassword, role
-        })
-
-        return res.status(200).json({
-            success: true,
-            User,
-            message: "user created successfully ✅"
-        })
     } catch (error) {
-        console.error(error)
+        console.error(error);
         return res.status(500).json({
             success: false,
-            message : "Use registration failed"
-        })
+            message: 'User registration failed',
+        });
     }
-}
+};
 
 
-exports.login = async(req, res)=> {
 
+exports.login = async (req, res) => {
     try {
-        //data fetch
-        const {email, password} = req.body
-        //validation on email and password
-        if(!email || !password){
-            return res.status(400).json({
-                success:false,
-                message: "Plz fill all the details carefully"
-            })
-        }
+        const { email, password } = req.body;
 
-        //check for registered User
-        let User= await  user.findOne({email})
-        //if user not registered or not found in database
-        if(!User){
+        // Check if user exists
+        const existingUser = await user.findOne({ email });
+        if (!existingUser) {
             return res.status(401).json({
                 success: false,
-                message: "You have to Signup First"
-            })
+                message: 'User not found',
+            });
         }
 
-        const payload ={
-            email: User.email,
-            id: User._id,
-            role: User.role,
-        }
-        //verify password and generate a JWt token 🔎
-        if(await bcrypt.compare(password,User.password)){
-            //if password matched
-             //now lets create a JWT token
-             let token = jwt.sign(payload, 
-                        process.env.JWT_SECRET,
-                        {expiresIn: "2h"}
-                        )
-            User = User.toObject()
-            User.token = token
-            
-            User.password = undefined
-            const options = {
-                expires: new Date( Date.now()+ 3*24*60*60*1000),
-                httpOnly: true  //It will make cookie not accessible on clinet side -> good way to keep hackers away
-
-            }
-            res.cookie(
-                "token",
-                token,
-                options
-            ).status(200).json({
+        // Verify password
+        if (await bcrypt.compare(password, existingUser.password)) {
+            const token = generateToken(existingUser);
+            return res.status(200).json({
                 success: true,
                 token,
-                User,
-                message: "Logged in Successfully✅"
-
-            })
-
-        }else{
-            //password donot matched
+                user: existingUser,
+                message: 'Logged in successfully ✅',
+            });
+        } else {
             return res.status(403).json({
                 success: false,
-                message: "Password incorrects⚠️"
-            })
+                message: 'Password incorrect ⚠️',
+            });
         }
-
     } catch (error) {
-        console.error(error)
-        res.status(500).json({
+        console.error(error);
+        return res.status(500).json({
             success: false,
-            message: "Login failure⚠️ :" + error
-        })
+            message: 'Login failure ⚠️: ' + error,
+        });
     }
+};
 
-}
+// Helper function to generate JWT token
+const generateToken = (user) => {
+    const payload = {
+        email: user.email,
+        id: user._id,
+        role: user.role,
+    };
 
-;
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
+};
+
+
+
