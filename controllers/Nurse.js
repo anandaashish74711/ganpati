@@ -1,3 +1,4 @@
+const Nurse = require('../models/NurseSchema')
 const { hashPassword, createUser, checkRequiredFields } = require('../utils/auth');
 
 exports.signupNurse = async (req, res) => {

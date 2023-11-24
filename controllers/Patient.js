@@ -1,5 +1,7 @@
+const Patient = require('../models/PatientSchema')
 const { hashPassword, createUser, checkRequiredFields } = require('../utils/auth');
-exports.signupPatient = async (req, res) => {
+exports.
+signupPatient = async (req, res) => {
     try {
         const { name, email, password, role, age, gender, race, height, weight, BMI, bloodGroup, nurseId, comorbidities, medicationHistory } = req.body;
 

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose')
+
 const acceptedBloodGroups = ['A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-'];
+
 const PatientSchema = new mongoose.Schema({
     name: { type: String, required: true },
     age: { type: Number, required: true, min: 0 },
