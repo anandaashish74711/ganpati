@@ -22,12 +22,12 @@ const userInfoSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+<<<<<<< HEAD
     visit: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Visit',
     }],
+=======
+   
+>>>>>>> 76ce3da06d2885c2a558f107c2e0dfbb9488b0ee
 });
-
-const UserInfo = mongoose.model('UserInfo', userInfoSchema);
-
-module.exports = UserInfo;

@@ -3,14 +3,14 @@ const mongoose = require('mongoose');
 const { connect } = require('../config/database');
 const Observation = require('../models/MedicalData');
 const UserInfo = require('../models/userInfo');
-const Visit = require('../models/visit');
+const Visit = require('../models/visit');      
 
 const addObservationToVisit = async (req, res) => {
   const { UserId, observationData } = req.body;
 
   try {
     connect();
-
+ 
     const userInfo = await UserInfo.findOne({ UserId: UserId });
 
     if (!userInfo) {

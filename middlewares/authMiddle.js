@@ -30,23 +30,5 @@ exports.auth = (req, res, next) => {
     }
 };
 
-// exports.checkUserRole = (role) => {
-//     return (req, res, next) => {
-//         try {
-//             if (req.user.role === role) {
-//                 next(); // User has the specified role, continue to the route handler
-//             } else {
-//                 return res.status(401).json({
-//                     success: false,
-//                     message: `You are not authorized as ${role} ⚠️`
-//                 });
-//             }
-//         } catch (error) {
-//             return res.status(500).json({
-//                 success: false,
-//                 message: `Something error occurred ⚠️: ${error}`
-//             });
-//         }
-//     };
-// };
+
 

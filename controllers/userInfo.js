@@ -75,7 +75,7 @@ exports.getUserInfoById = async (req, res) => {
 
 
 
-exports.getUserInfo = async (req, res) => {
+exports.getallUsers = async (req, res) => {
   try {
     await connect();
 
@@ -93,7 +93,11 @@ exports.getUserInfo = async (req, res) => {
 
  
     try {
+<<<<<<< HEAD
       const userInfo = await UserInfo.find();
+=======
+      const userInfo = await UserInfo.find().populate();
+>>>>>>> 76ce3da06d2885c2a558f107c2e0dfbb9488b0ee
 
       if (!userInfo) {
         return res.status(404).json({ message: 'No user information found' });
