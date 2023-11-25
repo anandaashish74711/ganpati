@@ -1,5 +1,7 @@
-
+const Admin = require('../models/AdminSchema');
 const { hashPassword, createUser, checkRequiredFields } = require('../utils/auth');
+
+
 exports.signupAdmin = async (req, res) => {
     try {
         const { name, email, password, role } = req.body;

@@ -8,12 +8,10 @@ const checkUserRole = require('../middlewares/authMiddle');
 exports.addUserInfo = async (req, res) => {
   try {
     await connect();
-
     const { UserId,name,age,bloodGroup,gender} = req.body;
-    
 
     const userExists = await User.exists({ _id: UserId });
-
+    
     if (!userExists) {
       return res.status(400).json({
         success: false,
@@ -21,7 +19,6 @@ exports.addUserInfo = async (req, res) => {
       });
     }
     
-
     // Create user info
     const userInfo = await UserInfo.create({
       UserId,
@@ -51,8 +48,16 @@ exports.getUserInfoById = async (req, res) => {
   try {
     await connect();
     const userId = req.params.userId;
-    const userInfo = await UserInfo.findOne({ UserId: userId }).populate('MedicalData'); 
 
+    const userInfo = await UserInfo.findOne({ UserId: userId })
+    .populate({
+      path: 'visit',
+      populate: {
+        path: 'MedicalData',
+        model: 'Observation', // Assuming 'ObservationSchema' is the model name
+      },
+    });
+ 
     if (!userInfo) {
       return res.status(404).json({ message: 'User information not found' });
     }
@@ -64,9 +69,6 @@ exports.getUserInfoById = async (req, res) => {
     res.status(500).json({ message: 'Server error' });
   }
 };
-
-
-
 
 
 exports.getallUsers = async (req, res) => {
@@ -87,7 +89,7 @@ exports.getallUsers = async (req, res) => {
 
  
     try {
-      const userInfo = await UserInfo.find().populate();
+      const userInfo = await UserInfo.find();
 
       if (!userInfo) {
         return res.status(404).json({ message: 'No user information found' });

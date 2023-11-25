@@ -1,3 +1,4 @@
+const Doctor = require('../models/DoctorSchema')
 const { hashPassword, createUser, checkRequiredFields } = require('../utils/auth');
 exports.signupDoctor = async (req, res) => {
     try {
@@ -11,7 +12,7 @@ exports.signupDoctor = async (req, res) => {
             name,
             email,
             password: hashedPassword,
-            admin: adminId,
+            adminId: adminId,
             hospital,
             // You may add additional doctor-specific fields here
         });
