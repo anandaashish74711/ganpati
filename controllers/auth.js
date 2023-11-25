@@ -4,9 +4,10 @@ const jwt= require('jsonwebtoken')
 
 
 const{signupAdmin }=require('./Admin')
+const{signupDoctor}=require('./Doctor')
 const{signupPatient}=require('./Patient')
 const{signupNurse}=require('./Nurse')
-const{signupDoctor}=require('./Doctor')
+
 require('dotenv').config()
 
 //signup handle
@@ -15,10 +16,11 @@ exports.signup = async (req, res) => {
         const { role } = req.body;
 
         switch (role) {
+           
             case 'Admin':
                 return await signupAdmin(req, res);
-            case 'Doctor':
-                return await signupDoctor(req, res);
+             case 'Doctor':
+                 return await signupDoctor(req, res);
             case 'Nurse':
                 return await signupNurse(req, res);
             case 'Patient':
