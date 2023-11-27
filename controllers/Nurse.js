@@ -1,11 +1,19 @@
-const Nurse = require('../models/NurseSchema')
+
+const Nurse = require('../models/NurseSchema');
+const Doctor = require('../models/DoctorSchema'); // Assuming you have a Doctor model
 const { hashPassword, createUser, checkRequiredFields } = require('../utils/auth');
 
 exports.signupNurse = async (req, res) => {
     try {
         const { name, email, password, role, doctorId } = req.body;
 
-        checkRequiredFields(req, res, ['name', 'email', 'password', 'role', 'doctorId']);
+        // Check if all required fields are present
+        if (!name || !email || !password || !role || !doctorId) {
+            return res.status(400).json({
+                success: false,
+                message: 'All fields are required',
+            });
+        }
 
         const hashedPassword = await hashPassword(password);
 
@@ -18,6 +26,11 @@ exports.signupNurse = async (req, res) => {
         });
 
         const newUser = await createUser({ name, email, password: hashedPassword, role }, newNurse._id);
+
+        // Add the new nurse to the doctor's nurses array
+        const doctor = await Doctor.findById(doctorId);
+        doctor.nurses.push(newNurse._id);
+        await doctor.save();
 
         return res.status(200).json({
             success: true,
@@ -33,3 +46,5 @@ exports.signupNurse = async (req, res) => {
         });
     }
 };
+
+

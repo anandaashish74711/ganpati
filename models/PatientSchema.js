@@ -29,10 +29,10 @@ const PatientSchema = new mongoose.Schema({
     },
     medicationHistory: {
       diuretics: Boolean
-    },
+    },  
     visit: [{
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'VisitSchema',
+      ref: 'Visit',
   }],
 
   });
