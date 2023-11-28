@@ -41,13 +41,31 @@ exports.signup = async (req, res) => {
 };
 
 
-
 exports.login = async (req, res) => {
     try {
-        const { email, password } = req.body;
+        const { email, password, role } = req.body;
 
-        // Check if user exists
-        const existingUser = await user.findOne({ email });
+        let existingUser;
+
+        switch (role) {
+            case 'Admin':
+            case 'Doctor':
+            case 'Nurse':
+            case 'Patient':
+                existingUser = await user.findOne({
+                    $or: [
+                        { 'details.email': email, role },
+                        // Add additional conditions for other roles if needed
+                    ],
+                });
+                break;
+            default:
+                return res.status(400).json({
+                    success: false,
+                    message: 'Invalid role specified',
+                });
+        }
+
         if (!existingUser) {
             return res.status(401).json({
                 success: false,
@@ -78,17 +96,3 @@ exports.login = async (req, res) => {
         });
     }
 };
-
-// Helper function to generate JWT token
-const generateToken = (user) => {
-    const payload = {
-        email: user.email,
-        id: user._id,
-        role: user.role,
-    };
-
-    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
-};
-
-
-

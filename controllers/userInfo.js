@@ -5,44 +5,6 @@ const UserInfo = require('../models/userInfo');
 const User = require('../models/user');
 const checkUserRole = require('../middlewares/authMiddle');
 
-exports.addUserInfo = async (req, res) => {
-  try {
-    await connect();
-    const { UserId,name,age,bloodGroup,gender} = req.body;
-
-    const userExists = await User.exists({ _id: UserId });
-    
-    if (!userExists) {
-      return res.status(400).json({
-        success: false,
-        message: "User does not exist"
-      });
-    }
-    
-    // Create user info
-    const userInfo = await UserInfo.create({
-      UserId,
-      name,
-      age,
-      bloodGroup,
-      gender
-    });
-
-    return res.status(200).json({
-      success: true,
-      userInfo,
-      message: "UserInfo created successfully ✅"
-    });
-  } catch (error) {
-    // Handle errors here, you can log the error for debugging
-    console.error(error);
-    return res.status(500).json({
-      success: false,
-      message: "An error occurred while adding UserInfo"
-    });
-  }
-};
-
 
 exports.getUserInfoById = async (req, res) => {
   try {
