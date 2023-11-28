@@ -1,14 +1,28 @@
 const bcrypt = require('bcrypt')
 const user = require("../models/user")
 const jwt= require('jsonwebtoken')
+const Nurse = require('../models/NurseSchema'); 
+const Patient= require('../models/PatientSchema'); 
+const Admin= require('../models/AdminSchema'); 
+const Doctor= require('../models/DoctorSchema'); 
 
 
 const{signupAdmin }=require('./Admin')
 const{signupDoctor}=require('./Doctor')
 const{signupPatient}=require('./Patient')
 const{signupNurse}=require('./Nurse')
+const { ObjectId } = require('mongodb')
 
 require('dotenv').config()
+const generateToken = (user) => {
+    const payload = {
+        email: user.email,
+        id: user._id,
+        role: user.role,
+    };
+
+    return jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '2h' });
+};
 
 //signup handle
 exports.signup = async (req, res) => {
@@ -40,24 +54,25 @@ exports.signup = async (req, res) => {
     }
 };
 
-
 exports.login = async (req, res) => {
     try {
         const { email, password, role } = req.body;
 
-        let existingUser;
 
+        // Use the correct model based on the role to query the user
+        let userModel;
         switch (role) {
             case 'Admin':
+                userModel = Admin; // replace with your actual Admin model
+                break;
             case 'Doctor':
+                userModel = Doctor; // replace with your actual Doctor model
+                break;
             case 'Nurse':
+                userModel = Nurse; // replace with your actual Nurse model
+                break;
             case 'Patient':
-                existingUser = await user.findOne({
-                    $or: [
-                        { 'details.email': email, role },
-                        // Add additional conditions for other roles if needed
-                    ],
-                });
+                userModel = Patient; // replace with your actual Patient model
                 break;
             default:
                 return res.status(400).json({
@@ -65,6 +80,9 @@ exports.login = async (req, res) => {
                     message: 'Invalid role specified',
                 });
         }
+        let existingUser = await userModel.findOne({ 'email': email});
+
+
 
         if (!existingUser) {
             return res.status(401).json({
