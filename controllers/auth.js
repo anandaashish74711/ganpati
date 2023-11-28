@@ -63,16 +63,16 @@ exports.login = async (req, res) => {
         let userModel;
         switch (role) {
             case 'Admin':
-                userModel = Admin; // replace with your actual Admin model
+                userModel = Admin;
                 break;
             case 'Doctor':
-                userModel = Doctor; // replace with your actual Doctor model
+                userModel = Doctor; 
                 break;
             case 'Nurse':
-                userModel = Nurse; // replace with your actual Nurse model
+                userModel = Nurse;
                 break;
             case 'Patient':
-                userModel = Patient; // replace with your actual Patient model
+                userModel = Patient; 
                 break;
             default:
                 return res.status(400).json({
