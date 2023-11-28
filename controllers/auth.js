@@ -1,5 +1,5 @@
 const bcrypt = require('bcrypt')
-const user = require("../models/user")
+
 const jwt= require('jsonwebtoken')
 const Nurse = require('../models/NurseSchema'); 
 const Patient= require('../models/PatientSchema'); 
@@ -11,7 +11,6 @@ const{signupAdmin }=require('./Admin')
 const{signupDoctor}=require('./Doctor')
 const{signupPatient}=require('./Patient')
 const{signupNurse}=require('./Nurse')
-const { ObjectId } = require('mongodb')
 
 require('dotenv').config()
 const generateToken = (user) => {
