@@ -12,3 +12,4 @@ const NurseSchema = new mongoose.Schema({
   patients: [{ type: mongoose.Schema.Types.ObjectId, ref: "Patient" }],
   approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "Doctor" },
 });
+module.exports=mongoose.model('Nurse',NurseSchema)

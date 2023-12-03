@@ -46,5 +46,3 @@ exports.signupNurse = async (req, res) => {
         });
     }
 };
-
-
