@@ -9,7 +9,7 @@ const PatientSchema = new mongoose.Schema({
     race: { type: String, required: true },
     height: { type: Number, required: true },
     weight: { type: Number, required: true },
-    BMI: { type: Number, required: true },
+    BMI: { type: Number, required: true }, 
     bloodGroup: { type: String, required: true, enum: acceptedBloodGroups },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
@@ -34,7 +34,8 @@ const PatientSchema = new mongoose.Schema({
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Visit',
   }],
-
+  
+  verificationToken: { type: String }
   });
   module.exports = mongoose.model('Patient', PatientSchema)
   
