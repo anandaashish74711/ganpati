@@ -14,12 +14,13 @@ require('./config/database').connect()
 
 //route importing and mounting
 const user = require('./routes/user')
-const userinfo = require('./routes/userinfo.router')
 const medicaldata = require('./routes/medicaldata.router')
+const patient = require('./routes/patient.routes')
+
 
 app.use('/api/v1', user)
-app.use('/api/v1', userinfo)
 app.use('/api/v1', medicaldata)
+app.use('/api/v1',patient)
 
 
 

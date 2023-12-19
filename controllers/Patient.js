@@ -1,7 +1,8 @@
-
+const { connect } = require('../config/database');
 const Patient = require('../models/PatientSchema');
 const Nurse = require('../models/NurseSchema'); // Assuming you have a Nurse model
 const { hashPassword, createUser, checkRequiredFields } = require('../utils/auth');
+
 
 // Patient Signup Function
 exports.signupPatient = async (req, res) => {
@@ -70,3 +71,36 @@ exports.signupPatient = async (req, res) => {
       });
   }
 };
+
+
+exports.getUserInfoById = async (req, res) => {
+    try {
+      await connect();
+      const patientId = req.params.patientId;
+      console.log(patientId)
+  
+      const patientInfo = await Patient.findOne({_id: patientId })
+      .populate({
+        path: 'visit',
+        populate: {
+          path: 'MedicalData',
+          model: 'Observation', // Assuming 'ObservationSchema' is the model name
+        },
+      });
+
+   
+      if (!patientInfo) {
+        return res.status(404).json({ message: 'User information not found' });
+      }
+  
+      res.status(200).json(patientInfo);
+  
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: 'Server error' });
+    }
+  };
+
+
+
+
