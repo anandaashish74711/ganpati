@@ -77,7 +77,7 @@ exports.getUserInfoById = async (req, res) => {
     try {
       await connect();
       const patientId = req.params.patientId;
-      console.log(patientId)
+
   
       const patientInfo = await Patient.findOne({_id: patientId })
       .populate({
@@ -100,7 +100,31 @@ exports.getUserInfoById = async (req, res) => {
       res.status(500).json({ message: 'Server error' });
     }
   };
+     
+
+ exports.getvisitlenghtbyId = async (req, res) => {
+  const patientId = req.params.patientId;
+
+  try {
+    connect();
+ 
+    const patient = await Patient.findOne({_id: patientId });
+
+    if (!patient) {
+      return res.status(404).json({ message: 'User not is found'});
+    }
+
+    const visitlenght =patient.visit.length
 
 
-
-
+      return res.status(200).json({
+        success: true,
+        length: {
+          visitlenght:visitlenght
+        },
+  })
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}

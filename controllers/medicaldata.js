@@ -5,7 +5,7 @@ const Patient = require('../models/PatientSchema');
 const Visit = require('../models/visit');      
 
 const addObservationToVisit = async (req, res) => {
-  const { UserId, observationData } = req.body;
+  const { UserId, observationData,visitcount } = req.body;
 
   try {
     connect();
@@ -19,7 +19,8 @@ const addObservationToVisit = async (req, res) => {
     const newObservation = new Observation({ ...observationData });
     await newObservation.save();
 
-    if (patient.visit.length === 0) {
+    if (patient.visit.length === visitcount) {
+      console.log('new visit')
       const newVisit = new Visit({
         visitDate: new Date(),
         MedicalData: [newObservation._id], // Push only the ObjectId
