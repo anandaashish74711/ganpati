@@ -119,9 +119,7 @@ exports.getUserInfoById = async (req, res) => {
 
       return res.status(200).json({
         success: true,
-        length: {
-          visitlenght:visitlenght
-        },
+        length: visitlenght,
   })
   } catch (err) {
     console.error(err);
