@@ -78,13 +78,16 @@ exports.getUserInfoById = async (req, res) => {
       await connect();
       const patientId = req.params.patientId;
 
+      if (!mongoose.isValidObjectId(patientId)) {
+        return res.status(400).json({ message: 'Invalid patientId' });
+    }
   
       const patientInfo = await Patient.findOne({_id: patientId })
       .populate({
         path: 'visit',
         populate: {
           path: 'MedicalData',
-          model: 'Observation', // Assuming 'ObservationSchema' is the model name
+          model: 'Observation',  
         },
       });
 
