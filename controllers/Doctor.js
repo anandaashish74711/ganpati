@@ -42,6 +42,7 @@ exports.signupDoctor = async (req, res) => {
             password: hashedPassword,
             adminId: adminId,
             hospital,
+            
             // You may add additional doctor-specific fields here
         });
 
