@@ -1,14 +1,14 @@
-
+const mongoose = require("mongoose");
 const Nurse = require('../models/NurseSchema');
-const Doctor = require('../models/DoctorSchema'); // Assuming you have a Doctor model
+const Doctor = require('../models/DoctorSchema');
 const { hashPassword, createUser, checkRequiredFields } = require('../utils/auth');
 
 exports.signupNurse = async (req, res) => {
     try {
-        const { name, email, password, role, doctorId } = req.body;
+        const { name, email, password, role, doctorName } = req.body;
 
         // Check if all required fields are present
-        if (!name || !email || !password || !role || !doctorId) {
+        if (!name || !email || !password || !role || !doctorName) {
             return res.status(400).json({
                 success: false,
                 message: 'All fields are required',
@@ -17,19 +17,27 @@ exports.signupNurse = async (req, res) => {
 
         const hashedPassword = await hashPassword(password);
 
+        // Find the doctor by name
+        const doctor = await Doctor.findOne({ name: doctorName });
+
+        if (!doctor) {
+            return res.status(404).json({
+                success: false,
+                message: 'Doctor not found',
+            });
+        }
+
         const newNurse = await Nurse.create({
             name,
             email,
             password: hashedPassword,
-            doctor: doctorId,
-            // You may add additional nurse-specific fields here
+            doctor: doctor._id, // Use doctor's ID instead of name
         });
 
         const newUser = await createUser({ name, email, password: hashedPassword, role }, newNurse._id);
 
         // Add the new nurse to the doctor's nurses array
-        const doctor = await Doctor.findById(doctorId);
-        doctor.nurses.push(newNurse._id);
+        doctor.nurses.push({ nurseId: newNurse._id, nurseName: name });
         await doctor.save();
 
         return res.status(200).json({
