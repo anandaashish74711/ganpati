@@ -141,7 +141,7 @@ exports.getUserInfoById = async (req, res) => {
       await connect();
       const patientId = req.params.patientId;
  
-     
+     ///
   
       const patientInfo = await Patient.findOne({_id: patientId })
       .populate({
