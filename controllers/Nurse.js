@@ -54,3 +54,24 @@ exports.signupNurse = async (req, res) => {
         });
     }
 };
+
+exports.getNurseInfo = async (req, res) => {
+  try {
+    const nurseId = req.params.nurseId; 
+    console.log(nurseId)
+    const nurseInfo = await Nurse.findOne({ _id: nurseId });
+
+    if (!nurseInfo) {
+      console.log('Nurse information not found');
+      return res.status(404).json({ message: 'Nurse information not found' });
+    }
+
+    res.status(200).json(nurseInfo);
+  } catch (error) {
+    console.error('Error:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+
+
