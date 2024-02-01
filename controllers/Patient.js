@@ -92,6 +92,7 @@ exports.signupPatient = async (req, res) => {
       bloodGroup,
       email,
       password: hashedPassword,
+      role,
       nurse: nurse._id,
       nurseName:nurseName,
       comorbidities,
@@ -109,7 +110,7 @@ exports.signupPatient = async (req, res) => {
     });
     await nurse.save();
 
-    // Also, add the patient to the doctor's patients array (assuming the doctor has a patients array)
+  
     if (doctor) {
       doctor.patients.push({
         patientId: newPatient._id,

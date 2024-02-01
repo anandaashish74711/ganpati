@@ -13,6 +13,7 @@ const PatientSchema = new mongoose.Schema({
     bloodGroup: { type: String, required: true, enum: acceptedBloodGroups },
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
+    role:{type:String, required:true},
     nurse: { type: mongoose.Schema.Types.ObjectId, ref: 'Nurse', required: true },
     nurseName: { type: String, required: true },
     assignedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'Nurse' },

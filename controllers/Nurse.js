@@ -31,6 +31,7 @@ exports.signupNurse = async (req, res) => {
             name,
             email,
             password: hashedPassword,
+            role,
             doctor: doctor._id, // Use doctor's ID instead of name
         });
 
