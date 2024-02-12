@@ -91,6 +91,7 @@ exports.login = async (req, res) => {
         }
 
         // Verify password
+        
         if (await bcrypt.compare(password, existingUser.password)) {
             const token = generateToken(existingUser);
             return res.status(200).json({
