@@ -1,4 +1,13 @@
 const bcrypt = require('bcrypt')
+const express = require('express');
+const app = express();
+
+const cookieParser = require('cookie-parser');
+
+
+
+app.use(cookieParser());
+
 
 const jwt= require('jsonwebtoken')
 const Nurse = require('../models/NurseSchema'); 
@@ -94,6 +103,9 @@ exports.login = async (req, res) => {
         
         if (await bcrypt.compare(password, existingUser.password)) {
             const token = generateToken(existingUser);
+            res.cookie('isLoggedIn',token,{httpOnly:true})
+            
+
             return res.status(200).json({
                 success: true,
                 token,
