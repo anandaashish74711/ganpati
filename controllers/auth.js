@@ -103,7 +103,7 @@ exports.login = async (req, res) => {
         
         if (await bcrypt.compare(password, existingUser.password)) {
             const token = generateToken(existingUser);
-            res.cookie('isLoggedIn',token,{httpOnly:true})
+            
             
 
             return res.status(200).json({
@@ -125,4 +125,9 @@ exports.login = async (req, res) => {
             message: 'Login failure ⚠️: ' + error,
         });
     }
+
+
+
+  
+    
 };
